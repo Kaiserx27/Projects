@@ -1,0 +1,64 @@
+def remove_foreign_chars(text: str) -> str:
+    """Usuwa znaki inne niż litery, cyfry i spacje."""
+    import re
+    return re.sub(r'[^a-zA-Z0-9 ]', '', text)
+
+
+def caesar_cipher(
+        mode: str,  # 'encode' lub 'decode'
+        text: str,
+        shift: int,
+        mod: int,
+        charset: str,
+        foreign_chars: str
+) -> str:
+    
+
+    # Jeśli dekodujemy — odwróć znak przesunięcia
+    if mode == "decode":
+        shift = -shift
+
+    # Jeśli foreign_chars == '1' usuń znaki spoza alfabetu
+    if foreign_chars == "1":
+        text = remove_foreign_chars(text)
+
+    charset = charset.lower()
+    result = ""
+
+    for char in text:
+        lower_char = char.lower()
+        if lower_char in charset:
+            index = charset.index(lower_char)
+            new_index = (index + shift) % mod
+            if new_index < 0:
+                new_index += mod
+            new_char = charset[new_index]
+            # Zachowaj wielkość litery
+            if char.isupper():
+                new_char = new_char.upper()
+            result += new_char
+        else:
+            result += char
+    return result
+
+
+# --- Przykładowe użycie (symulacja tego co robił formularz HTML/JS) ---
+
+if __name__ == "__main__":
+    print("=== Szyfr Cezara (Python) ===")
+    mode = input("Wybierz tryb [encode/decode]: ").strip().lower()
+    text = input("Podaj tekst: ")
+    shift = int(input("Podaj przesunięcie (np. 3): "))
+    mod = int(input("Podaj modulo (np. 26): "))
+    charset = input("Podaj alfabet (np. abcdefghijklmnopqrstuvwxyz): ")
+    letter_case = input("Zachowaj wielkość? [1=tak, 2=małe, 3=duże]: ")
+    foreign_chars = input("Usunąć znaki obce? [1=tak, 0=nie]: ")
+
+    output = caesar_cipher(mode, text, shift, mod, charset, foreign_chars)
+
+    if letter_case == "2":
+        output = output.lower()
+    elif letter_case == "3":
+        output = output.upper()
+
+    print("\nWynik:", output)
